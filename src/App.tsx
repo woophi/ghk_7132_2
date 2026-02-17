@@ -25,6 +25,7 @@ import p4Img from './assets/p4.png';
 import { LS, LSKeys } from './ls';
 import { appSt } from './style.css';
 import { ThxLayout } from './thx/ThxLayout';
+import { sendDataToGA } from './utils/events';
 import { WaitIcon } from './WaitIcon';
 
 const targets = [
@@ -161,19 +162,13 @@ export const App = () => {
   const submit = () => {
     setLoading(true);
 
-    // sendDataToGA({
-    //   autopayments: Number(checked) as 1 | 0,
-    //   limit: Number(checked2) as 1 | 0,
-    //   limit_sum: limit ?? 0,
-    //   insurance: Number(checked3) as 1 | 0,
-    //   email: email ? 1 : 0,
-    // }).then(() => {
-    //   LS.setItem(LSKeys.ShowThx, true);
-    //   setThx(true);
-    //   setLoading(false);
-    // });
-    setThx(true);
-    setLoading(false);
+    sendDataToGA({
+      active_list: selectedFund || 'none',
+    }).then(() => {
+      LS.setItem(LSKeys.ShowThx, true);
+      setThx(true);
+      setLoading(false);
+    });
   };
 
   if (thxShow) {
@@ -263,10 +258,26 @@ export const App = () => {
         <Gap size={128} />
 
         <div className={appSt.bottomBtn} style={{ backgroundColor: '#F6F6FD' }}>
-          <Button block view="primary" onClick={submit} loading={loading}>
+          <Button
+            block
+            view="primary"
+            onClick={() => {
+              window.gtag('event', '7132_add_active', { var: 'var2' });
+              submit();
+            }}
+            loading={loading}
+          >
             Добавить в портфель
           </Button>
-          <Button block view="secondary" onClick={submit} loading={loading}>
+          <Button
+            block
+            view="secondary"
+            onClick={() => {
+              window.gtag('event', '7132_skip_click', { var: 'var2' });
+              submit();
+            }}
+            loading={loading}
+          >
             Пропустить
           </Button>
         </div>
@@ -401,8 +412,6 @@ export const App = () => {
           <div key={index}>
             <div
               onClick={() => {
-                window.gtag('event', '7132_bundle_faq', { faq: String(index + 1), var: 'var2' });
-
                 setCollapsedItem(items =>
                   items.includes(String(index + 1))
                     ? items.filter(item => item !== String(index + 1))
