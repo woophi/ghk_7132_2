@@ -450,6 +450,8 @@ export const App = () => {
           block
           view="primary"
           onClick={() => {
+            window.gtag('event', '7132_start_click', { var: 'var2' });
+
             setSteps('opening');
           }}
         >
