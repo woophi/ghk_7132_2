@@ -165,7 +165,6 @@ export const App = () => {
     sendDataToGA({
       active_list: selectedFund || 'none',
     }).then(() => {
-      LS.setItem(LSKeys.ShowThx, true);
       setThx(true);
       setLoading(false);
     });
@@ -266,6 +265,7 @@ export const App = () => {
               submit();
             }}
             loading={loading}
+            disabled={!selectedFund}
           >
             Добавить в портфель
           </Button>
